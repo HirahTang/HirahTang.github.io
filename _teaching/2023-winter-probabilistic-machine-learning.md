@@ -10,4 +10,5 @@ location: "Copenhagen, Denmark"
 ---
 
 [Course Material](https://sites.google.com/diku.edu/machine-learning-courses/pml?authuser=0)
+
 [Information](https://kurser.ku.dk/course/NDAK21004U)
