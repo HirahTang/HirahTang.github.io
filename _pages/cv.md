@@ -11,30 +11,22 @@ redirect_from:
 
 Education
 ======
-* B.S. in GitHub, GitHub University, 2012
-* M.S. in Jekyll, GitHub University, 2014
-* Ph.D in Version Control Theory, GitHub University, 2018 (expected)
+* B.S. in Applied Chemistry, Beijing University of Chemical Technology 2017
+* M.S. in Computer Science, Technological University Dublin, 2020
+* Ph.D in Machine Learning for Biology, University of Copenhagen, 2026 (expected)
 
 Work experience
 ======
-* Summer 2015: Research Assistant
-  * Github University
-  * Duties included: Tagging issues
-  * Supervisor: Professor Git
+* December 2021 - July 2023: Research Assistant, Institute for AI Industry Research (AIR), Tsinghua University
+  * Artifical Intelligence for Small Molecule Drug Discovery and Protein Structure Prediction
 
-* Fall 2015: Research Assistant
-  * Github University
-  * Duties included: Merging pull requests
-  * Supervisor: Professor Hub
-  
+* September 2020 - March 2021: Research Assistant, Technological University Dublin
+
+* July 2019 - September 2019: Intern, Postal Savings Bank of China
 Skills
 ======
-* Skill 1
-* Skill 2
-  * Sub-skill 2.1
-  * Sub-skill 2.2
-  * Sub-skill 2.3
-* Skill 3
+* Python, Machine Learning, Deep Learning, Graph Neural Networks, Cheminformatics, Bioinformatics
+
 
 Publications
 ======
