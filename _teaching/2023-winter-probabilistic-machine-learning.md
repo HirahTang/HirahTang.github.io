@@ -4,7 +4,6 @@ collection: teaching
 type: "Master Course"
 permalink: /teaching/2023-winter-probabilistic-machine-learning
 venue: "University of Copenhagen"
-
 date: 2023-11-20
 location: "Copenhagen, Denmark"
 ---
