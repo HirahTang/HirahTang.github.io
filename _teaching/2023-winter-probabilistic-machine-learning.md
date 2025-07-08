@@ -1,5 +1,5 @@
 ---
-title: "Teaching Assistant - 2023/2024 Probabilistic Machine Learning"
+title: "Teaching Assistant - 2023/2024, 2024/2025 Probabilistic Machine Learning"
 collection: teaching
 type: "Master Course"
 permalink: /teaching/2023-winter-probabilistic-machine-learning
