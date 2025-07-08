@@ -1,38 +1,38 @@
----
-title: 'My Research Journey in Machine Learning and Chemistry'
-date: 2025-07-08
-permalink: /posts/2025/07/research-journey/
-tags:
-  - machine learning
-  - chemistry
-  - research
-  - phd life
----
+% ---
+% title: 'My Research Journey in Machine Learning and Chemistry'
+% date: 2025-07-08
+% permalink: /posts/2025/07/research-journey/
+% tags:
+%   - machine learning
+%   - chemistry
+%   - research
+%   - phd life
+% ---
 
-# My Research Journey
+% # My Research Journey
 
-As a Ph.D. candidate at the University of Copenhagen's Department of Computer Science, I've been exploring the fascinating intersection of machine learning, life sciences, and chemistry. In this post, I'd like to share some insights from my research journey.
+% As a Ph.D. candidate at the University of Copenhagen's Department of Computer Science, I've been exploring the fascinating intersection of machine learning, life sciences, and chemistry. In this post, I'd like to share some insights from my research journey.
 
-## Background
+% ## Background
 
-Working under the mentorship of Prof. Wouter Boomsma, my research draws on my previous experience as a Research Engineer at Tsinghua University's Institute for AI Industry Research. This unique combination of industry and academic experience has shaped my approach to tackling complex problems in computational chemistry.
+% Working under the mentorship of Prof. Wouter Boomsma, my research draws on my previous experience as a Research Engineer at Tsinghua University's Institute for AI Industry Research. This unique combination of industry and academic experience has shaped my approach to tackling complex problems in computational chemistry.
 
-## Current Research Focus
+% ## Current Research Focus
 
-My work focuses on applying machine learning techniques to solve challenging problems in chemistry and life sciences. Some key areas include:
+% My work focuses on applying machine learning techniques to solve challenging problems in chemistry and life sciences. Some key areas include:
 
-- **Molecular Generation**: Developing improved diffusion models for generating novel molecular structures
-- **Protein Structure Prediction**: Leveraging deep learning for understanding protein folding patterns
-- **Drug Discovery**: Using AI to accelerate the identification of potential therapeutic compounds
+% - **Molecular Generation**: Developing improved diffusion models for generating novel molecular structures
+% - **Protein Structure Prediction**: Leveraging deep learning for understanding protein folding patterns
+% - **Drug Discovery**: Using AI to accelerate the identification of potential therapeutic compounds
 
-## Challenges and Insights
+% ## Challenges and Insights
 
-One of the most exciting aspects of interdisciplinary research is the constant learning curve. Each project requires understanding not just the computational methods, but also the underlying scientific principles and domain-specific challenges.
+% One of the most exciting aspects of interdisciplinary research is the constant learning curve. Each project requires understanding not just the computational methods, but also the underlying scientific principles and domain-specific challenges.
 
-## Looking Forward
+% ## Looking Forward
 
-I'm excited to continue pushing the boundaries of what's possible when machine learning meets chemistry. Stay tuned for more updates on my research progress!
+% I'm excited to continue pushing the boundaries of what's possible when machine learning meets chemistry. Stay tuned for more updates on my research progress!
 
----
+% ---
 
-*What are your thoughts on the role of AI in scientific discovery? Feel free to reach out if you'd like to discuss any of these topics further.*
+%  d*What are your thoughts on the role of AI in scientific discovery? Feel free to reach out if you'd like to discuss any of these topics further.*
