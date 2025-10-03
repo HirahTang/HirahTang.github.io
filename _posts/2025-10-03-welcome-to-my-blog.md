@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "Welcome to My Research Blog"
 date: 2025-10-03
 permalink: /posts/2025/10/welcome-to-my-blog/
@@ -42,4 +42,4 @@ I'm looking forward to sharing this journey with you! Feel free to reach out if 
 
 ---
 
-*Stay tuned for more posts about the exciting intersection of AI and chemistry!*
+*Stay tuned for more posts about the exciting intersection of AI and chemistry!* -->

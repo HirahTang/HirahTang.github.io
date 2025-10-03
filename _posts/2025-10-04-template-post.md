@@ -1,4 +1,4 @@
----
+<!-- ---
 title: "Your Next Blog Post Title"
 date: 2025-10-04
 permalink: /posts/2025/10/your-post-slug/
@@ -28,4 +28,4 @@ def hello_world():
 You can include equations: $E = mc^2$
 
 Or block equations:
-$$\sum_{i=1}^{n} x_i = x_1 + x_2 + ... + x_n$$
+$$\sum_{i=1}^{n} x_i = x_1 + x_2 + ... + x_n$$ -->
