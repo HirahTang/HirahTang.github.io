@@ -11,19 +11,19 @@ redirect_from:
 
 Education
 ======
-* Ph.D in Machine Learning for Biology, University of Copenhagen, 2026 (expected)
-* M.S. in Computer Science, Technological University Dublin, 2020
-* B.S. in Applied Chemistry, Beijing University of Chemical Technology, 2017
+* Ph.D in Machine Learning for Biology, University of Copenhagen, Copenhagen, Denmark 2026 (expected)
+* M.S. in Computer Science, Technological University Dublin, Dublin, Ireland 2020
+* B.S. in Applied Chemistry, Beijing University of Chemical Technology, Beijing, China 2017
 
 
 Work experience
 ======
-* December 2021 - July 2023: Research Assistant, Institute for AI Industry Research (AIR), Tsinghua University
+* December 2021 - July 2023: Research Assistant, Institute for AI Industry Research (AIR), Tsinghua University, Beijing, China
   * Artifical Intelligence for Small Molecule Drug Discovery and Protein Structure Prediction
 
-* September 2020 - March 2021: Research Assistant, Technological University Dublin
+* September 2020 - March 2021: Research Assistant, Technological University Dublin, Dublin, Ireland
 
-* July 2019 - September 2019: Intern, Postal Savings Bank of China
+* July 2019 - September 2019: Intern, Postal Savings Bank of China, Beijing, China
 
 Skills
 ======
