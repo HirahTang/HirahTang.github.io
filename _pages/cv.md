@@ -13,7 +13,7 @@ Education
 ======
 * Ph.D in Machine Learning for Biology, University of Copenhagen, 2026 (expected)
 * M.S. in Computer Science, Technological University Dublin, 2020
-* B.S. in Applied Chemistry, Beijing University of Chemical Technology 2017
+* B.S. in Applied Chemistry, Beijing University of Chemical Technology, 2017
 
 
 Work experience
