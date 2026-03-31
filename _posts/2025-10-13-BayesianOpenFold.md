@@ -1,5 +1,6 @@
 ---
 title: "Bayesian Machine Learning for Predicting Structures of Protein Ensembles"
+published: false
 date: 2025-10-13
 permalink: /posts/2025/10/Bayesian-Protein-Structures/
 tags:

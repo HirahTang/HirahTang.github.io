@@ -1,5 +1,6 @@
 ---
 title: "Evaluating Structural Prediction Models Over Proteins Containing NCAAs and PTMs"
+published: false
 date: 2025-10-03
 permalink: /posts/2025/10/protein-structure-prediction/
 tags:
