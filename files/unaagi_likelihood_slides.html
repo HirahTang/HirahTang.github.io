@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deriving Amino-Acid Likelihood from UNAAGI</title>
+
+<script>
+MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']],
+    tags: 'none'
+  },
+  options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #f0f0ec;
+    color: #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+    gap: 2.5rem;
+  }
+
+  .deck-title {
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #666;
+    margin-bottom: 0.5rem;
+  }
+
+  /* ── Slide shell ── */
+  .slide {
+    width: 100%;
+    max-width: 820px;
+    background: #ffffff;
+    border: 1px solid #d8d8d4;
+    border-top: 4px solid #2a4a7f;
+    border-radius: 3px;
+    padding: 2.4rem 2.8rem 1.6rem;
+    position: relative;
+    page-break-inside: avoid;
+  }
+
+  .slide-number {
+    position: absolute;
+    top: 1rem;
+    right: 1.4rem;
+    font-size: 0.72rem;
+    color: #999;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.05em;
+  }
+
+  .slide h2 {
+    font-size: 1.22rem;
+    font-weight: bold;
+    color: #2a4a7f;
+    margin-bottom: 1.4rem;
+    line-height: 1.35;
+    border-bottom: 1px solid #e0e0da;
+    padding-bottom: 0.7rem;
+  }
+
+  .slide ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+  }
+
+  .slide ul li {
+    padding-left: 1.3rem;
+    position: relative;
+    font-size: 0.93rem;
+    line-height: 1.6;
+    color: #222;
+  }
+
+  .slide ul li::before {
+    content: '—';
+    position: absolute;
+    left: 0;
+    color: #2a4a7f;
+    font-weight: bold;
+  }
+
+  .slide ul li.sub {
+    padding-left: 2.4rem;
+    font-size: 0.87rem;
+    color: #444;
+  }
+
+  .slide ul li.sub::before {
+    content: '·';
+    left: 1.3rem;
+    color: #888;
+  }
+
+  /* equation block */
+  .eq-block {
+    background: #f5f5f0;
+    border-left: 3px solid #2a4a7f;
+    padding: 0.7rem 1.2rem;
+    margin: 1rem 0 1.2rem;
+    font-size: 1rem;
+    border-radius: 0 2px 2px 0;
+    overflow-x: auto;
+  }
+
+  /* contrast box for side-by-side */
+  .contrast {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1rem 0 1.2rem;
+  }
+
+  .contrast-box {
+    background: #f5f5f0;
+    border: 1px solid #d0d0cc;
+    border-radius: 3px;
+    padding: 0.8rem 1rem;
+  }
+
+  .contrast-box h4 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #555;
+    margin-bottom: 0.5rem;
+  }
+
+  .contrast-box p {
+    font-size: 0.87rem;
+    line-height: 1.5;
+    color: #333;
+  }
+
+  /* takeaway */
+  .takeaway {
+    background: #eef2f8;
+    border-left: 3px solid #2a4a7f;
+    padding: 0.55rem 1rem;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: #2a3a5a;
+    margin-top: 1.2rem;
+    border-radius: 0 2px 2px 0;
+  }
+
+  .takeaway strong {
+    font-style: normal;
+    font-weight: bold;
+    margin-right: 0.3em;
+  }
+
+  /* footer */
+  .slide-footer {
+    margin-top: 1.4rem;
+    font-size: 0.68rem;
+    color: #aaa;
+    text-align: right;
+    letter-spacing: 0.04em;
+    border-top: 1px solid #eee;
+    padding-top: 0.5rem;
+  }
+
+  /* ── SVG diagram (slide 5) ── */
+  .diagram {
+    margin: 1.2rem 0;
+    display: flex;
+    justify-content: center;
+  }
+
+  svg text { font-family: 'Georgia', serif; }
+
+  /* ── Print ── */
+  @media print {
+    body { background: white; padding: 0; gap: 0; }
+    .slide { border: none; border-top: 3px solid #2a4a7f; page-break-after: always;
+             max-width: 100%; border-radius: 0; }
+  }
+</style>
+</head>
+<body>
+
+<p class="deck-title">Group Meeting — Discussion Draft</p>
+
+<!-- ═══════════════════════════════════════════════════════ SLIDE 1 -->
+<div class="slide" id="slide-1">
+  <span class="slide-number">1 / 5</span>
+
+  <h2>Goal: derive an amino-acid likelihood from UNAAGI</h2>
+
+  <ul>
+    <li>UNAAGI is an atom-level generative model over side-chain structures, operating in a unified NAA/NCAA space</li>
+    <li>We want a residue-level score for amino acid $\mathrm{aa}$ given pocket context $E$</li>
+    <li>The natural target quantity is the marginal probability over conformer space:
+      <div class="eq-block">
+        $$P(\mathrm{aa} \mid E) \;=\; \int \mathbf{1}\bigl[\mathrm{aa}(X) = \mathrm{aa}\bigr]\; p(X \mid E)\; \mathrm{d}X$$
+      </div>
+      where $\mathrm{aa}(X)$ maps a conformer to its discrete chemical identity — well-defined for standard amino acids, worth care for NCAAs
+    </li>
+    <li>"Better" means higher likelihood under the training data distribution — <em>not</em> direct fitness</li>
+    <li>Working hypothesis: this signal may correlate with mutational effect, analogous to MSA likelihoods or inverse-folding model scores</li>
+  </ul>
+
+  <div class="takeaway">
+    <strong>Takeaway:</strong> The target is an amino-acid likelihood signal, not direct fitness — the correlation is a hypothesis, not an assumption.
+  </div>
+
+  <div class="slide-footer">Group meeting discussion draft</div>
+</div>
+<!-- Speaker notes:
+  The core motivation is that UNAAGI already models structures at the atom level, so there is a natural quantity to compute: the marginal probability over all conformers X that are consistent with amino acid aa.
+  The link to mutational effect is a working hypothesis — it is the same kind of reasoning that underlies ESM or inverse-folding scores, just applied to an atom-level conformer model.
+  We are not claiming this signal is fitness; we are asking whether it is informative.
+-->
+
+
+<!-- ═══════════════════════════════════════════════════════ SLIDE 2 -->
+<div class="slide" id="slide-2">
+  <span class="slide-number">2 / 5</span>
+
+  <h2>Monte Carlo gives a direct route, but not a satisfying one</h2>
+
+  <ul>
+    <li>A direct estimate of $P(\mathrm{aa} \mid E)$ is available via sampling:
+      <div class="eq-block">
+        $$\hat{P}(\mathrm{aa} \mid E) \;\approx\; \frac{1}{N} \sum_{i=1}^{N} \mathbf{1}\bigl[\mathrm{aa}(X^{(i)}) = \mathrm{aa}\bigr], \quad X^{(i)} \sim p(\cdot \mid E)$$
+      </div>
+    </li>
+    <li>Problems with this approach:
+      <ul>
+        <li class="sub">Expensive — requires many forward passes per context $E$</li>
+        <li class="sub">High variance — rare amino acids need far more samples to estimate reliably</li>
+        <li class="sub">Poor coverage of rare events — tail amino acids may never be sampled</li>
+      </ul>
+    </li>
+    <li>Ranking many candidate amino acids compounds all of these issues simultaneously</li>
+  </ul>
+
+  <div class="takeaway">
+    <strong>Takeaway:</strong> Sampling-based estimation is possible in principle, but computationally and statistically weak for amino-acid ranking.
+  </div>
+
+  <div class="slide-footer">Group meeting discussion draft</div>
+</div>
+<!-- Speaker notes:
+  This is the most naive approach and the one we have been partially exploring — generate a batch of samples and count identities.
+  The fundamental issue is that this is estimating a low-dimensional marginal by integrating over a very high-dimensional conformer space, which is inherently wasteful.
+  For common amino acids in favorable pockets it might work tolerably, but the ranking problem requires consistency across all 20 amino acids including rare ones.
+-->
+
+
+<!-- ═══════════════════════════════════════════════════════ SLIDE 3 -->
+<div class="slide" id="slide-3">
+  <span class="slide-number">3 / 5</span>
+
+  <h2>Natural next step: estimate $p(X \mid E)$ directly</h2>
+
+  <ul>
+    <li>If $p(X \mid E)$ were reliable, importance sampling turns the integral into an expectation:
+      <div class="eq-block">
+        $$P(\mathrm{aa} \mid E) \;\approx\; \mathbb{E}_{X \sim q_\mathrm{aa}}\!\left[\frac{p(X \mid E)}{q_\mathrm{aa}(X)}\right]$$
+      </div>
+      where $q_\mathrm{aa}(X) = p(X \mid \mathrm{aa}, E)$ is UNAAGI run with identity fixed to $\mathrm{aa}$ — sample conformers from the identity-conditioned model, reweight by the ratio to the unconditional density
+    </li>
+    <li>The ratio $p(X \mid E)\,/\,p(X \mid \mathrm{aa}, E)$ measures how much more or less likely a conformer is once identity is revealed</li>
+    <li>This requires UNAAGI to be operable in a <em>conditioned-on-identity</em> mode — a non-trivial assumption worth flagging</li>
+    <li>The bottleneck shifts: the question is no longer how to sample, but whether $p(X \mid E)$ is a meaningful and accessible score</li>
+  </ul>
+
+  <div class="takeaway">
+    <strong>Takeaway:</strong> IS converts the problem to density evaluation — but requires UNAAGI to support identity conditioning, and still rests on $p(X \mid E)$ being a valid score.
+  </div>
+
+  <div class="slide-footer">Group meeting discussion draft</div>
+</div>
+<!-- Speaker notes:
+  The importance sampling identity is exact for any proposal q_aa with the right support — the key choice is to use UNAAGI itself conditioned on amino acid identity as the proposal.
+  This means: run UNAAGI with identity fixed to aa to get conformers, then reweight each conformer by the ratio of the unconditional to identity-conditioned density.
+  This requires the model to be operable in an identity-conditioned mode, which may or may not be directly supported — it is a design assumption we should be explicit about.
+  The whole approach still rests on p(X | E) being a meaningful and accessible density, which is what we examine on the next slide.
+-->
+
+
+<!-- ═══════════════════════════════════════════════════════ SLIDE 4 -->
+<div class="slide" id="slide-4">
+  <span class="slide-number">4 / 5</span>
+
+  <h2>Why DM/FM likelihood may be the wrong scoring object</h2>
+
+  <ul>
+    <li>DM/FM training optimises a <em>surrogate</em> of data likelihood, not the exact log-likelihood directly:
+      <ul>
+        <li class="sub">Diffusion: denoising score-matching loss $\equiv$ reweighted ELBO — a lower bound on $\log p(X)$, not exact MLE</li>
+        <li class="sub">Flow matching: vector-field regression — matched to a transport process, no direct likelihood objective</li>
+      </ul>
+    </li>
+    <li>Accessing $p(X \mid E)$ after training requires additional computation — two routes, with different guarantees:</li>
+  </ul>
+
+  <div class="contrast">
+    <div class="contrast-box">
+      <h4>Probability flow ODE</h4>
+      <p>Convert the diffusion/FM process to a deterministic ODE (Song et al. 2021).<br>
+         Gives <em>exact</em> log-likelihood via the instantaneous change-of-variables formula.<br>
+         Expensive: requires a full ODE solve with divergence estimation.</p>
+    </div>
+    <div class="contrast-box">
+      <h4>ELBO / variational bound</h4>
+      <p>Sum denoising losses across noise levels.<br>
+         Gives a <em>lower bound</em> on $\log p(X)$, not the exact value.<br>
+         Related to — but not identical to — the training loss.</p>
+    </div>
+  </div>
+
+  <ul>
+    <li>Contrast: AR and normalizing flows optimise $\log p(X \mid E)$ exactly as the training objective — likelihood is native, not derived</li>
+    <li>Hypothesis: even if $p(X \mid E)$ is numerically accessible via the ODE route, it may still be a <em>weak or unstable</em> residue-ranking signal — the model was shaped by a surrogate, not by the quantity we want to use</li>
+  </ul>
+
+  <div class="takeaway">
+    <strong>Takeaway:</strong> DM/FM training optimises a likelihood surrogate, not exact MLE — accessing $p(X \mid E)$ requires additional computation with different guarantees, and may still be the wrong ranking object.
+  </div>
+
+  <div class="slide-footer">Group meeting discussion draft</div>
+</div>
+<!-- Speaker notes:
+  The key point is that DM/FM training is not completely divorced from likelihood — the DDPM loss is provably a reweighted ELBO — but it is not optimising the exact log-likelihood either.
+  The two routes to accessing p(X|E) after training have different costs and different guarantees: the ODE route is exact but expensive; the ELBO route gives a lower bound and is related to but not equal to the training loss.
+  The deeper concern is not just computational: even the exact ODE likelihood may not be the right object for residue ranking, because the model was trained to be a good generator, not to assign well-calibrated densities to individual conformers.
+  This is still a hypothesis — it is worth testing empirically — but it motivates looking for a separate scorer.
+-->
+
+
+<!-- ═══════════════════════════════════════════════════════ SLIDE 5 -->
+<div class="slide" id="slide-5">
+  <span class="slide-number">5 / 5</span>
+
+  <h2>Reframing UNAAGI: sampler first, scorer separate?</h2>
+
+  <ul>
+    <li>Hypothesis: DM/FM models may be strong <em>samplers</em> of plausible conformers, but weak native <em>scorers</em> of residue identity</li>
+    <li>Proposed decomposition:</li>
+  </ul>
+
+  <!-- SVG diagram -->
+  <div class="diagram">
+    <svg width="720" height="170" viewBox="0 0 720 170" xmlns="http://www.w3.org/2000/svg" aria-label="Conceptual diagram comparing current and proposed pipeline">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#2a4a7f"/>
+        </marker>
+        <marker id="arr-g" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#3a6a3f"/>
+        </marker>
+      </defs>
+
+      <!-- Current row label -->
+      <text x="0" y="42" font-size="11" fill="#888" font-style="italic">Current</text>
+
+      <!-- Current: E box -->
+      <rect x="60" y="22" width="60" height="32" rx="3" fill="#f0f4fa" stroke="#2a4a7f" stroke-width="1.4"/>
+      <text x="90" y="43" font-size="13" fill="#2a4a7f" text-anchor="middle" font-style="italic">E</text>
+
+      <!-- arrow -->
+      <line x1="120" y1="38" x2="154" y2="38" stroke="#2a4a7f" stroke-width="1.4" marker-end="url(#arr)"/>
+
+      <!-- UNAAGI box -->
+      <rect x="155" y="22" width="100" height="32" rx="3" fill="#e8eef8" stroke="#2a4a7f" stroke-width="1.4"/>
+      <text x="205" y="43" font-size="12" fill="#2a4a7f" text-anchor="middle">UNAAGI</text>
+
+      <!-- arrow -->
+      <line x1="255" y1="38" x2="289" y2="38" stroke="#2a4a7f" stroke-width="1.4" marker-end="url(#arr)"/>
+
+      <!-- samples box -->
+      <rect x="290" y="22" width="130" height="32" rx="3" fill="#f5f5f0" stroke="#999" stroke-width="1.2" stroke-dasharray="4 2"/>
+      <text x="355" y="38" font-size="11" fill="#555" text-anchor="middle">samples</text>
+      <text x="355" y="50" font-size="10" fill="#888" text-anchor="middle">+ implicit score</text>
+
+      <!-- brace / problem note -->
+      <text x="435" y="30" font-size="11" fill="#c04040" font-style="italic">score mixed with sampler</text>
+      <line x1="425" y1="38" x2="432" y2="38" stroke="#c04040" stroke-width="1" stroke-dasharray="2 2"/>
+
+      <!-- ── Proposed row ── -->
+      <text x="0" y="112" font-size="11" fill="#888" font-style="italic">Proposed</text>
+
+      <!-- (aa, E) box -->
+      <rect x="60" y="92" width="80" height="32" rx="3" fill="#f0f4fa" stroke="#3a6a3f" stroke-width="1.4"/>
+      <text x="100" y="109" font-size="12" fill="#3a6a3f" text-anchor="middle" font-style="italic">(aa, E)</text>
+      <text x="100" y="120" font-size="9" fill="#3a6a3f" text-anchor="middle">identity + context</text>
+
+      <!-- arrow -->
+      <line x1="140" y1="108" x2="174" y2="108" stroke="#3a6a3f" stroke-width="1.4" marker-end="url(#arr-g)"/>
+
+      <!-- Sampler box -->
+      <rect x="175" y="92" width="100" height="32" rx="3" fill="#edf4ee" stroke="#3a6a3f" stroke-width="1.4"/>
+      <text x="225" y="109" font-size="12" fill="#3a6a3f" text-anchor="middle">Sampler</text>
+      <text x="225" y="120" font-size="9.5" fill="#3a6a3f" text-anchor="middle">p(X | aa, E)</text>
+
+      <!-- arrow -->
+      <line x1="275" y1="108" x2="309" y2="108" stroke="#3a6a3f" stroke-width="1.4" marker-end="url(#arr-g)"/>
+      <text x="292" y="102" font-size="9" fill="#3a6a3f" text-anchor="middle">conformers</text>
+
+      <!-- Scorer box -->
+      <rect x="310" y="92" width="100" height="32" rx="3" fill="#edf4ee" stroke="#3a6a3f" stroke-width="1.4"/>
+      <text x="360" y="109" font-size="12" fill="#3a6a3f" text-anchor="middle">Scorer</text>
+      <text x="360" y="120" font-size="9.5" fill="#3a6a3f" text-anchor="middle">s(X, E)</text>
+
+      <!-- arrow -->
+      <line x1="410" y1="108" x2="444" y2="108" stroke="#3a6a3f" stroke-width="1.4" marker-end="url(#arr-g)"/>
+
+      <!-- output box -->
+      <rect x="445" y="92" width="120" height="32" rx="3" fill="#f5f5f0" stroke="#3a6a3f" stroke-width="1.2"/>
+      <text x="505" y="109" font-size="11" fill="#333" text-anchor="middle">aa-level score</text>
+      <text x="505" y="120" font-size="9.5" fill="#555" text-anchor="middle">P(aa | E)</text>
+
+      <!-- divider line between rows -->
+      <line x1="0" y1="75" x2="720" y2="75" stroke="#ddd" stroke-width="1" stroke-dasharray="3 3"/>
+    </svg>
+  </div>
+
+  <ul>
+    <li>Open questions:
+      <ul>
+        <li class="sub">Should $s(X, E)$ be a physics-based scorer (e.g. Rosetta REF2015), a learned model, or a hybrid?</li>
+        <li class="sub">Aggregate over conformers by sum / mean / max, or score only the top-$k$?</li>
+        <li class="sub">What training signal should supervise the scorer — experimental $\Delta\Delta G$, DMS, or structure quality?</li>
+      </ul>
+    </li>
+  </ul>
+
+  <div class="takeaway">
+    <strong>Takeaway:</strong> A modular sampler-plus-scorer may be cleaner than forcing DM/FM likelihood into a residue-scoring role — but the right scorer is an open question.
+  </div>
+
+  <div class="slide-footer">Group meeting discussion draft</div>
+</div>
+<!-- Speaker notes:
+  The key reframing is that UNAAGI's strength — generating diverse, physically reasonable conformers — can be decoupled from the question of how to score them.
+  We have already been doing a version of this with Rosetta: sample a conformer, place it in the pocket, score with REF2015. The question is whether this is the right scorer and the right aggregation strategy.
+  The open questions at the bottom are genuine — they are what I would want the group's input on before committing to a direction.
+-->
+
+</body>
+</html>
