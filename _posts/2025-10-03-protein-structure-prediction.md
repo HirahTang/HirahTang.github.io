@@ -24,6 +24,9 @@ Critically, the model takes 2D information as input, making it intrinsically una
 **GPepT** [9] trains a GPT-2-style autoregressive model on SMILES-derived peptidomimetic token sequences, where canonical amino acids, noncanonical amino acids, and terminal modifications are represented as discrete tokens. The model is further fine-tuned on a small set of E. coli antimicrobial peptides, and one generated peptidomimetic is experimentally validated. However, the paper provides limited details on the fine-tuning protocol and candidate-selection process, and lacks a systematic statistical evaluation of generated sequence quality, synthesizability, activity distribution, or hit rate.
 
 Similarly, **HELM-GPT** [10] is a GPT-style model on HELM representations for macrocyclic peptide generation and uses learned property predictors to guide optimization. However, because its evaluation mainly relies on these trained oracles, without experimental validation, the practical effectiveness of the generated peptides remains uncertain.
+
+**AutoRotLib** [11] performed Rosetta-based computational site-saturation mutagenesis over canonical and noncanonical amino acids on the PUMA–MCL-1 and CP2–KDM4 benchmarks, using AutoRotLib to parameterize NCAAs and estimating mutation effects through Rosetta ΔΔG calculations. This provides a directly relevant structure-based baseline for NCAA substitution prediction, but the method relies on predefined rotamer libraries and Rosetta scoring, showing variable agreement with experimental mutational effects. More recently, **FakeRotLib** [12] was proposed as a faster, open-source alternative for Rosetta-based NCAA rotamer-library generation, although its improvement has mainly been demonstrated on rotamer- and sequence-recovery benchmarks rather than experimental NCAA mutational-effect prediction.
+
 ## References
 
 1. Jumper J, Evans R, Pritzel A, Green T, Figurnov M, Ronneberger O, Tunyasuvunakool K, Bates R, Žídek A, Potapenko A, et al. *Highly accurate protein structure prediction with AlphaFold.* **Nature**, 596, 583–589 (2021). [https://doi.org/10.1038/s41586-021-03819-2](https://doi.org/10.1038/s41586-021-03819-2)
@@ -45,3 +48,7 @@ Similarly, **HELM-GPT** [10] is a GPT-style model on HELM representations for ma
 9. Oikawa, Y., Uzawa, T., Berenger, F., Minagawa, N., Yumoto, A., Takaku, H., Tamura, R., Ito, Y., & Tsuda, K. (2025). GPepT: A Foundation Language Model for Peptidomimetics Incorporating Noncanonical Amino Acids. ACS Medicinal Chemistry Letters, 16, 1670–1675. [https://doi.org/10.1021/acsmedchemlett.5c00375](https://doi.org/10.1021/acsmedchemlett.5c00375)
 
 10. Xu, X., Xu, C., He, W., Wei, L., Li, H., Zhou, J., Zhang, R., Wang, Y., Xiong, Y., & Gao, X. (2024). HELM-GPT: de novo macrocyclic peptide design using generative pre-trained transformer. Bioinformatics, 40(6), btae364. https://doi.org/10.1093/bioinformatics/btae364
+
+11. Holden, J. K., Pavlovicz, R., Gobbi, A., Song, Y., & Cunningham, C. N. (2022). Computational Site Saturation Mutagenesis of Canonical and Non-Canonical Amino Acids to Probe Protein-Peptide Interactions. Frontiers in Molecular Biosciences, 9, 848689. https://doi.org/10.3389/fmolb.2022.848689
+
+12. Bell, E. W., Brown, B. P., & Meiler, J. (2025). FakeRotLib: expedient non-canonical amino acid parameterization in Rosetta. bioRxiv. https://doi.org/10.1101/2025.02.27.640629
