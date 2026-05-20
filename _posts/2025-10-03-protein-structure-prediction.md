@@ -23,6 +23,7 @@ Critically, the model takes 2D information as input, making it intrinsically una
 
 **GPepT** [9] trains a GPT-2-style autoregressive model on SMILES-derived peptidomimetic token sequences, where canonical amino acids, noncanonical amino acids, and terminal modifications are represented as discrete tokens. The model is further fine-tuned on a small set of E. coli antimicrobial peptides, and one generated peptidomimetic is experimentally validated. However, the paper provides limited details on the fine-tuning protocol and candidate-selection process, and lacks a systematic statistical evaluation of generated sequence quality, synthesizability, activity distribution, or hit rate.
 
+Similarly, **HELM-GPT** [10], trains a GPT-style model on HELM representations for macrocyclic peptide generation and uses learned property predictors to guide optimization. However, because its evaluation mainly relies on these trained oracles, without experimental validation, the practical effectiveness of the generated peptides remains uncertain.
 ## References
 
 1. Jumper J, Evans R, Pritzel A, Green T, Figurnov M, Ronneberger O, Tunyasuvunakool K, Bates R, Žídek A, Potapenko A, et al. *Highly accurate protein structure prediction with AlphaFold.* **Nature**, 596, 583–589 (2021). [https://doi.org/10.1038/s41586-021-03819-2](https://doi.org/10.1038/s41586-021-03819-2)
@@ -42,3 +43,5 @@ Critically, the model takes 2D information as input, making it intrinsically una
 8. Tang, S., Zhang, Y., & Chatterjee, P. (2025). PepTune: De Novo Generation of Therapeutic Peptides with Multi-Objective-Guided Discrete Diffusion. Proceedings of the 42nd International Conference on Machine Learning, PMLR 267.
 
 9. Oikawa, Y., Uzawa, T., Berenger, F., Minagawa, N., Yumoto, A., Takaku, H., Tamura, R., Ito, Y., & Tsuda, K. (2025). GPepT: A Foundation Language Model for Peptidomimetics Incorporating Noncanonical Amino Acids. ACS Medicinal Chemistry Letters, 16, 1670–1675. [https://doi.org/10.1021/acsmedchemlett.5c00375](https://doi.org/10.1021/acsmedchemlett.5c00375)
+
+10. Xu, X., Xu, C., He, W., Wei, L., Li, H., Zhou, J., Zhang, R., Wang, Y., Xiong, Y., & Gao, X. (2024). HELM-GPT: de novo macrocyclic peptide design using generative pre-trained transformer. Bioinformatics, 40(6), btae364. https://doi.org/10.1093/bioinformatics/btae364
