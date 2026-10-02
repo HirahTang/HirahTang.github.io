@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UNAAGI Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#ffffff; --ink:#16222e; --ink-2:#4c5c6b; --ink-3:#7b8996; --rule:#dde5ec;
+  --marine:#2d68b1; --pale:#96bde1; --green:#1a9433; --amber:#a86a1d;
+  --desk:#eceff2; --desk-ink:#43515e;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--desk:#141b22; --desk-ink:#93a2b0; color-scheme:dark;}
+}
+:root[data-theme="dark"]{--desk:#141b22; --desk-ink:#93a2b0; color-scheme:dark;}
+
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0; background:var(--desk); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  padding-block:20px; padding-left:16px; padding-right:16px}
+.stage{width:min(1280px,100%); aspect-ratio:16/9; background:var(--paper);
+  border-radius:3px; box-shadow:0 1px 3px rgba(20,34,46,.16),0 12px 40px rgba(20,34,46,.12);
+  position:relative; overflow:hidden}
+.slide{position:absolute; inset:0; padding:40px 50px 58px; display:none;
+  flex-direction:column; gap:16px}
+.slide[data-on]{display:flex}
+
+.card{border:1px solid var(--rule); border-radius:3px; padding:22px 24px;
+  display:flex; flex-direction:column; justify-content:center; gap:13px; flex:1; min-height:0}
+.card .num{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--marine)}
+.card h3{margin:0; font-family:"IBM Plex Serif",Georgia,serif; font-weight:600;
+  font-size:19px; line-height:1.2; color:var(--ink)}
+.card p{font-size:14px; line-height:1.5}
+.dia{margin:2px 0 4px; width:100%; height:auto; overflow:visible}
+.dia .bx{fill:none; stroke:var(--rule); stroke-width:1.2}
+.dia .bx-k{fill:none; stroke:var(--marine); stroke-width:1.6}
+.dia .ln{fill:none; stroke:var(--pale); stroke-width:1.5}
+.dia text{font-family:"IBM Plex Sans",sans-serif; font-size:11px; fill:var(--ink-2)}
+.dia text.k{fill:var(--marine); font-weight:600; font-size:12px}
+
+.eyebrow{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--marine); margin:0}
+h1{font-family:"IBM Plex Serif",Georgia,serif; font-weight:600; font-size:46px; line-height:1.08;
+  margin:0; text-wrap:balance; letter-spacing:-.015em}
+h2{font-family:"IBM Plex Serif",Georgia,serif; font-weight:600; font-size:28px; line-height:1.16;
+  margin:0; text-wrap:balance}
+p{margin:0; font-size:15.5px; line-height:1.55; color:var(--ink-2); max-width:64ch}
+.lede{font-size:18px; color:var(--ink); max-width:58ch}
+.small{font-size:13px; line-height:1.5; color:var(--ink-3)}
+.cite{font-size:10.5px; line-height:1.4; color:var(--ink-3); font-style:italic}
+b{font-weight:600; color:var(--ink)}
+.mono{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
+
+.row{display:flex; gap:26px; flex:1; min-height:0}
+.col{display:flex; flex-direction:column; gap:12px; min-width:0}
+.fig{flex:1; min-height:0; display:flex; align-items:center; justify-content:center}
+.fig img,.fig video{max-width:100%; max-height:100%; width:auto; height:auto; display:block}
+.fig.framed img,.fig.framed video{border:1px solid var(--rule); border-radius:2px}
+figcaption{font-size:12px; color:var(--ink-3); line-height:1.45}
+
+.vid{position:relative; display:flex; max-width:100%; max-height:100%}
+.replay{position:absolute; right:7px; bottom:7px; display:inline-flex; align-items:center; gap:5px;
+  font:500 11px/1 "IBM Plex Sans",sans-serif; padding:5px 9px 5px 7px; cursor:pointer;
+  color:var(--ink-2); background:rgba(255,255,255,.9); border:1px solid var(--rule);
+  border-radius:2px; opacity:0; transition:opacity .18s ease}
+.replay svg{width:11px; height:11px}
+.vid:hover .replay,.replay:focus-visible{opacity:1}
+.vid[data-done] .replay{opacity:1}
+.replay:hover{color:var(--marine); border-color:var(--marine)}
+.replay:focus-visible{outline:2px solid var(--marine); outline-offset:2px}
+.cont{position:absolute; left:50%; bottom:10px; transform:translateX(-50%);
+  display:none; align-items:center; gap:7px; white-space:nowrap;
+  font:500 12px/1 "IBM Plex Sans",sans-serif; padding:8px 14px; cursor:pointer;
+  color:#fff; background:var(--marine); border:1px solid var(--marine); border-radius:2px}
+.cont svg{width:11px; height:11px}
+.cont:hover{filter:brightness(1.12)}
+.cont:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+.vid[data-held] .cont{display:inline-flex}
+.vid[data-held] .replay{opacity:0; pointer-events:none}
+
+.grid{display:grid; gap:14px; flex:1; min-height:0}
+.grid figure{margin:0; display:flex; flex-direction:column; gap:6px; min-height:0}
+.grid .fig{flex:1; min-height:0}
+.tag{font-family:"IBM Plex Mono",monospace; font-size:11.5px; color:var(--ink);
+  display:flex; justify-content:space-between; gap:8px; align-items:baseline}
+.tag em{font-style:normal; color:var(--marine); font-weight:500}
+.tag em.site{color:var(--ink-3); font-weight:400; letter-spacing:.04em}
+
+table{border-collapse:collapse; font-size:13.5px; font-variant-numeric:tabular-nums; width:100%}
+th{text-align:left; font-weight:500; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--ink-3); padding:0 11px 6px 0; border-bottom:1px solid var(--rule); white-space:nowrap}
+td{padding:6px 11px 6px 0; border-bottom:1px solid var(--rule); color:var(--ink-2)}
+td:first-child{color:var(--ink); font-weight:500}
+.good{color:var(--green); font-weight:500}
+.warn{color:var(--amber); font-weight:500}
+
+.stat{display:flex; gap:32px; flex-wrap:wrap}
+.stat div{display:flex; flex-direction:column; gap:2px}
+.stat .v{font-family:"IBM Plex Mono",monospace; font-size:32px; font-weight:500; color:var(--ink); line-height:1}
+.stat .k{font-size:11.5px; color:var(--ink-3)}
+
+.bar{position:absolute; left:0; right:0; bottom:0; height:3px; background:var(--rule)}
+.bar i{display:block; height:100%; background:var(--marine); transition:width .25s ease}
+.foot{position:absolute; left:50px; right:50px; bottom:17px; display:flex; justify-content:space-between;
+  font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.09em;
+  color:var(--ink-3); text-transform:uppercase}
+.nav{width:min(1280px,100%); display:flex; justify-content:space-between; align-items:center;
+  margin-top:13px; color:var(--desk-ink); font-size:12.5px}
+.nav button{font:inherit; font-size:12.5px; padding:6px 13px; border:1px solid currentColor;
+  background:transparent; color:inherit; border-radius:2px; cursor:pointer; opacity:.75}
+.nav button:hover{opacity:1}
+.nav button:focus-visible{outline:2px solid var(--marine); outline-offset:2px}
+
+@media (max-width:860px){
+  .slide{padding:24px 20px 40px} h1{font-size:31px} h2{font-size:21px}
+  .row{flex-direction:column; gap:14px} .foot{left:20px; right:20px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- 1 TITLE -->
+  <section class="slide" data-on>
+    <h1 style="margin-top:auto">UNAAGI: Atom-Level Diffusion<br>for Generating Non-Canonical<br>Amino Acid Substitutions</h1>
+    <div style="margin-top:26px; display:flex; flex-direction:column; gap:7px">
+      <p style="font-size:17px; color:var(--ink)"><u>Han Tang</u>, Alexander Tong, Wouter Boomsma</p>
+    </div>
+    <div style="margin-top:auto"></div>
+    <div class="foot"><span></span><span></span></div>
+  </section>
+
+  <!-- 2 DIFFUSION -->
+  <section class="slide">
+    <p class="eyebrow">Background</p>
+    <h2>Diffusion learns to build structures from noise</h2>
+    <div class="fig"><img src="{{ '/files/unaagi/assets/sde_schematic.jpg' | relative_url }}" alt="Forward and reverse SDE schematic"></div>
+    <p>Diffusion models learn to generate structures by first adding noise to examples,
+      then learning to reconstruct them.</p>
+    <div class="foot"><span>Background</span><span class="mono" data-n></span></div>
+  </section>
+
+  <!-- 3 METHOD: the animation -->
+  <section class="slide">
+    <p class="eyebrow">Method</p>
+    <h2>UNAAGI illustration in motion</h2>
+    <div class="row">
+      <div class="col" style="flex:1.2">
+        <div class="fig framed"><video src="{{ '/files/unaagi/renders/method/forward_reverse.mp4' | relative_url }}" muted playsinline
+          data-stops="4.30" data-stop-labels="Now run the reverse process"></video></div>
+        <figcaption>Position 7 of the CP2 macrocycle bound to KDM4A (PDB 5LY1); native residue
+          serine. Backbone and pocket are held fixed throughout.</figcaption>
+      </div>
+      <div class="col" style="flex:.8; justify-content:center">
+        <p><b>Forward.</b> We play the animation backwards to show the side chain breaking down
+          into noise, losing its structure and atom identities.</p>
+        <p><b>Reverse.</b> Starting from noise, the model builds a side chain by generating atom
+          types, positions and bonds. In this example, it reconstructs serine.</p>
+      </div>
+    </div>
+    <div class="foot"><span>Method</span><span class="mono" data-n></span></div>
+  </section>
+
+  <!-- 4 METHOD: the schematic -->
+  <section class="slide">
+    <p class="eyebrow">Method</p>
+    <h2>Generating side chains to fit their local environment</h2>
+    <div class="row">
+      <div class="col" style="flex:1.45"><div class="fig"><img src="{{ '/files/unaagi/assets/ncaa_fig1.svg' | relative_url }}" alt="UNAAGI method schematic" style="width:100%; height:auto; object-fit:contain"></div></div>
+      <div class="col" style="flex:.55; justify-content:center">
+        <p>The backbone and surrounding structure stay fixed while UNAAGI removes the side chain
+          beyond C&alpha; and rebuilds it from noise.</p>
+        <p>The model generates atom types, positions and bonds together. Because it works
+          directly with atoms, it can build both canonical and non-canonical side chains
+          without choosing from a predefined list of amino acids.</p>
+      </div>
+    </div>
+    <div class="foot"><span>Method</span><span class="mono" data-n></span></div>
+  </section>
+
+  <!-- 5 BENCHMARK: the system -->
+  <section class="slide">
+    <p class="eyebrow">Benchmark</p>
+    <h2>Testing amino acid substitutions in two peptides</h2>
+    <div class="row">
+      <div class="col" style="flex:1">
+        <div class="fig"><img src="{{ '/files/unaagi/assets/fig2A.png' | relative_url }}" alt="The 21 non-proteinogenic amino acids used"></div>
+        <figcaption>The 21 non-canonical amino acids tested include longer side chains,
+          N-methylated residues and D-alanine.</figcaption>
+      </div>
+      <div class="col" style="flex:1">
+        <div class="fig"><img src="{{ '/files/unaagi/assets/fig2F.png' | relative_url }}" alt="CP2 macrocycle bound to KDM4A"></div>
+        <figcaption>CP2 is a cyclic peptide that binds KDM4A. PUMA is a helical peptide
+          that binds MCL-1.</figcaption>
+        <p class="small" style="margin-top:2px">The study tested a set of 40 amino acids,
+          replacing one residue at a time and measuring the change in binding (&Delta;&Delta;G).
+          Negative values mean stronger binding than the original peptide.</p>
+      </div>
+    </div>
+    <p class="cite">Panels A and F from Rogers JM, Passioura T, Suga H. &ldquo;Nonproteinogenic deep
+      mutational scanning of linear and cyclic peptides.&rdquo; <i>PNAS</i> 2018;115(43):10959&ndash;10964.
+      Open access, CC BY-NC-ND.</p>
+    <div class="foot"><span>Benchmark</span><span class="mono" data-n></span></div>
+  </section>
+
+  <!-- 6 BENCHMARK: the data -->
+  <section class="slide">
+    <p class="eyebrow">Benchmark</p>
+    <h2>How substitutions affect binding</h2>
+    <div class="row" style="gap:20px">
+      <div class="col" style="flex:1.15">
+        <div class="fig"><img src="{{ '/files/unaagi/assets/fig2E.png' | relative_url }}" alt="PUMA deep mutational scan heatmap"></div>
+        <figcaption>PUMA binding to MCL-1: 34 positions &times; 39 substitutions.</figcaption>
+      </div>
+      <div class="col" style="flex:.85">
+        <div class="fig"><img src="{{ '/files/unaagi/assets/fig2G.png' | relative_url }}" alt="CP2 deep mutational scan heatmap"></div>
+        <figcaption>CP2 binding to KDM4A: 12 positions &times; 39 substitutions.</figcaption>
+      </div>
+    </div>
+    <p class="small"><b>Red means stronger binding. Blue means weaker binding.</b>
+      Values show the change from the original peptide (&Delta;&Delta;G in kcal/mol).</p>
+    <p class="small">We count substitutions with <b>&Delta;&Delta;G &lt; 0.5 kcal/mol</b> as
+      <b>tolerated</b>, allowing a small loss in binding. We test whether UNAAGI proposes
+      these substitutions without access to the assay results.</p>
+    <p class="cite">Panels E and G, same source.</p>
+    <div class="foot"><span>Benchmark</span><span class="mono" data-n></span></div>
+  </section>
+
+  <!-- 7 ZOOM: taking the side chain out -->
+  <section class="slide">
+    <p class="eyebrow">Sampling</p>
+    <h2>Take one side chain out, and ask the model to rebuild it</h2>
+    <div class="row">
+      <div class="col" style="flex:1.25">
+        <div class="fig framed"><video src="{{ '/files/unaagi/renders/zoom/zoomwt_PUMA_pos141.mp4' | relative_url }}" muted playsinline></video></div>
+      </div>
+      <div class="col" style="flex:.75; justify-content:center">
+        <p><b>PUMA bound to MCL-1.</b> The animation zooms in on Leu141, shown in green.</p>
+        <p>We remove the side chain beyond C&alpha;, keeping the backbone and surrounding
+          structure fixed.</p>
+        <p>UNAAGI uses the surrounding atoms to generate a replacement side chain. It receives
+          no peptide sequence, assay results or original residue identity.</p>
+      </div>
+    </div>
+    <div class="foot"><span>Sampling</span><span class="mono" data-n></span></div>
+  </section>
+
+  <!-- 8 BURIED POSITION (PUMA 144) -->
+  <section class="slide">
+    <p class="eyebrow">Sampling &middot; PUMA 144</p>
+    <h2>At a hydrophobic site, UNAAGI samples amino acids that improve binding, including non-canonical residues</h2>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr)">
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/zoom/zoomwt_PUMA_pos144.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>Ala144 &mdash; wild type</span><em class="site">the site</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/PUMA_pos144_ILE.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>isoleucine</span><em>&minus;1.87</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/PUMA_pos144_Nle.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>norleucine</span><em>&minus;1.86</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/PUMA_pos144_PHE.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>phenylalanine</span><em>&minus;1.68</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/PUMA_pos144_LEU.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>leucine</span><em>&minus;1.64</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/PUMA_pos144_TRP.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>tryptophan</span><em>&minus;1.08</em></span></figure>
+    </div>
+
+    <div class="foot"><span>Sampling &middot; PUMA 144</span><span class="mono" data-n></span></div>
+  </section>
+
+  <!-- 9 TWO MORE OPEN POSITIONS -->
+  <section class="slide">
+    <p class="eyebrow">Sampling &middot; CP2 Thr13 and PUMA Ala139</p>
+    <h2>Several stabilising non-canonicals at a single position</h2>
+    <div class="grid" style="grid-template-columns:repeat(4,1fr); grid-template-rows:repeat(2,1fr)">
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/zoom/zoomwt_CP2_pos13.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>CP2 Thr13</span><em class="site">the site</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/CP2_pos13_PHE.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>phenylalanine</span><em>&minus;0.96</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/CP2_pos13_HIS.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>histidine</span><em>&minus;0.47</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/CP2_pos13_Nva.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>norvaline</span><em>&minus;0.20</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/zoom/zoomwt_PUMA_pos139.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>PUMA Ala139</span><em class="site">the site</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/PUMA_pos139_LEU.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>leucine</span><em>&minus;0.80</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/PUMA_pos139_TYR.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>tyrosine</span><em>&minus;0.20</em></span></figure>
+      <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/PUMA_pos139_Nle.mp4' | relative_url }}" muted playsinline></video></div>
+        <span class="tag"><span>norleucine</span><em>&minus;0.04</em></span></figure>
+    </div>
+    <div class="foot"><span>Sampling &middot; two more positions</span><span class="mono" data-n></span></div>
+  </section>
+
+  <!-- 10 RESTRICTIVE -->
+  <section class="slide">
+    <p class="eyebrow">Restrictive positions</p>
+    <h2>UNAAGI finds tolerated substitutions at restrictive sites</h2>
+    <div class="grid" style="grid-template-columns:repeat(3,1fr); grid-template-rows:repeat(2,1fr)">
+          <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/zoom/zoomwt_PUMA_pos145.mp4' | relative_url }}" muted playsinline></video></div>
+            <span class="tag"><span>Ala145</span><em class="site">the site</em></span></figure>
+          <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/zoom/zoomwt_PUMA_pos148.mp4' | relative_url }}" muted playsinline></video></div>
+            <span class="tag"><span>Leu148</span><em class="site">the site</em></span></figure>
+          <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/zoom/zoomwt_PUMA_pos141.mp4' | relative_url }}" muted playsinline></video></div>
+            <span class="tag"><span>Leu141</span><em class="site">the site</em></span></figure>
+          <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/PUMA_pos145_GLY.mp4' | relative_url }}" muted playsinline></video></div>
+            <span class="tag"><span>&rarr; glycine</span><em>&minus;1.71</em></span></figure>
+          <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/PUMA_pos148_tBu.mp4' | relative_url }}" muted playsinline></video></div>
+            <span class="tag"><span>&rarr; <i>tert</i>-butylalanine</span><em>&minus;0.04</em></span></figure>
+          <figure><div class="fig framed"><video src="{{ '/files/unaagi/renders/animations_geo/PUMA_pos141_tBu.mp4' | relative_url }}" muted playsinline></video></div>
+            <span class="tag"><span>&rarr; <i>tert</i>-butylalanine</span><em>+0.02</em></span></figure>
+    </div>
+    <div class="foot"><span>Restrictive positions</span><span class="mono" data-n></span></div>
+  </section>
+
+
+
+  <!-- 11 CORRELATION -->
+  <section class="slide">
+    <p class="eyebrow">Result</p>
+    <h2>UNAAGI has the highest correlation for non-canonical substitutions</h2>
+    <div class="row">
+      <div class="col" style="flex:1.5"><div class="fig"><img src="{{ '/files/unaagi/assets/fitness_barplot.svg' | relative_url }}" alt="Protein fitness paired barplot"></div></div>
+      <div class="col" style="flex:.5; justify-content:center">
+        <p>Higher bars mean closer agreement between each model&rsquo;s ranking and the measured
+          effects on binding.</p>
+        <p class="small">UNAAGI leads for non-canonical substitutions in both peptides. Across all
+          substitutions, it leads on PUMA and performs similarly to AF3 iPTM on CP2.</p>
+      </div>
+    </div>
+    <div class="foot"><span>Result</span><span class="mono" data-n></span></div>
+  </section>
+
+  <!-- 12 PROTEINGYM SANITY CHECK -->
+  <section class="slide">
+    <p class="eyebrow">Sanity check</p>
+    <h2>Benchmarking canonical substitutions across 25 ProteinGym assays</h2>
+    <div class="fig"><img src="{{ '/files/unaagi/assets/proteingym.svg' | relative_url }}" alt="Spearman correlation on 25 ProteinGym DMS assays, UNAAGI against ten baselines"></div>
+    <div class="foot"><span>Sanity check &middot; ProteinGym</span><span class="mono" data-n></span></div>
+  </section>
+
+  <!-- 13 WHAT WE ARE BUILDING NOW -->
+  <section class="slide">
+    <p class="eyebrow">In progress</p>
+    <h2>Next steps: scoring specific amino acids and learning from assay data</h2>
+    <div class="row" style="gap:22px">
+
+      <div class="card">
+        <span class="num">1 &middot; Conditional diffusion</span>
+        <h3>Scoring a chosen amino acid</h3>
+        <svg class="dia" viewBox="0 0 344 132" role="img"
+             aria-label="Local environment and target residue identity go into UNAAGI, which returns a model score">
+          <defs><marker id="ar" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6"
+                        markerHeight="6" orient="auto">
+            <path d="M0 0 L8 4 L0 8 z" fill="#96bde1"/></marker></defs>
+          <rect class="bx" x="1"   y="10" width="112" height="36" rx="2"/>
+          <text x="57" y="33" text-anchor="middle">local environment</text>
+          <rect class="bx" x="1"   y="72" width="112" height="36" rx="2"/>
+          <text x="57" y="95" text-anchor="middle">target residue</text>
+          <rect class="bx-k" x="152" y="32" width="86" height="54" rx="2"/>
+          <text class="k" x="195" y="64" text-anchor="middle">UNAAGI</text>
+          <rect class="bx" x="260" y="37" width="82" height="44" rx="2"/>
+          <text x="301" y="63" text-anchor="middle">model score</text>
+          <path class="ln" d="M113 28 H133 V56 H150" marker-end="url(#ar)"/>
+          <path class="ln" d="M113 90 H133 V62 H150" marker-end="url(#ar)"/>
+          <path class="ln" d="M238 59 H260" marker-end="url(#ar)"/>
+        </svg>
+        <p>We are developing a model that estimates how well a chosen amino acid fits its local
+          atomic environment. This will support scoring both canonical and non-canonical substitutions.</p>
+      </div>
+
+      <div class="card">
+        <span class="num">2 &middot; Preference optimisation</span>
+        <h3>Learning from experimental results</h3>
+        <svg class="dia" viewBox="0 0 344 132" role="img"
+             aria-label="A loop: generate, measure, update the model, generate again">
+          <rect class="bx-k" x="1"   y="8"  width="104" height="36" rx="2"/>
+          <text class="k" x="53" y="31" text-anchor="middle">generate</text>
+          <rect class="bx" x="225" y="8"  width="104" height="36" rx="2"/>
+          <text x="277" y="31" text-anchor="middle">measure</text>
+          <rect class="bx" x="113" y="88" width="104" height="36" rx="2"/>
+          <text x="165" y="111" text-anchor="middle">update model</text>
+          <path class="ln" d="M105 26 H223" marker-end="url(#ar)"/>
+          <path class="ln" d="M277 44 V106 H219" marker-end="url(#ar)"/>
+          <path class="ln" d="M113 106 H53 V46" marker-end="url(#ar)"/>
+        </svg>
+        <p>We plan to use assay results to favour substitutions with better measured binding.
+          New data will guide model updates and the next round of candidate generation.</p>
+      </div>
+
+    </div>
+    <div class="foot"><span>In progress</span><span class="mono" data-n></span></div>
+  </section>
+
+  <div class="bar"><i id="prog"></i></div>
+</div>
+
+<div class="nav">
+  <button id="prev" type="button">&larr; Previous</button>
+  <span class="mono" id="count"></span>
+  <button id="next" type="button">Next &rarr;</button>
+</div>
+
+<script>
+(function(){
+  var slides=Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var i=0, count=document.getElementById('count'), prog=document.getElementById('prog');
+  var calm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var ICON='<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor"'
+    +' stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">'
+    +'<path d="M13.5 8a5.5 5.5 0 1 1-1.9-4.15"/><path d="M13.6 1.9v3.3h-3.3"/></svg>';
+
+  var ARROW='<svg viewBox="0 0 16 16" aria-hidden="true" fill="none" stroke="currentColor"'
+    +' stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">'
+    +'<path d="M3 8h9.5"/><path d="M9 4.5 12.5 8 9 11.5"/></svg>';
+
+  document.querySelectorAll('video').forEach(function(v){
+    var w=document.createElement('div'); w.className='vid';
+    v.parentNode.insertBefore(w,v); w.appendChild(v);
+    var b=document.createElement('button'); b.type='button'; b.className='replay';
+    b.innerHTML=ICON+'<span>Replay</span>';
+    b.setAttribute('aria-label','Replay this animation');
+    b.addEventListener('click',function(){ play(v); });
+    w.appendChild(b);
+    v.addEventListener('ended',function(){ w.setAttribute('data-done',''); });
+
+    // a video may declare pause points: data-stops="4.67" (seconds, comma separated)
+    // with matching labels in data-stop-labels="Play the reverse process"
+    var stops=(v.getAttribute('data-stops')||'').split(',')
+      .map(function(x){ return parseFloat(x); })
+      .filter(function(x){ return !isNaN(x); });
+    var labels=(v.getAttribute('data-stop-labels')||'').split('|');
+    v._stops=stops; v._si=0;
+    if(stops.length){
+      var c=document.createElement('button'); c.type='button'; c.className='cont';
+      w.appendChild(c); v._cont=c;
+      c.addEventListener('click',function(){
+        w.removeAttribute('data-held'); v._si++;
+        try{ var p=v.play(); if(p&&p.catch) p.catch(function(){}); }catch(e){}
+      });
+      v.addEventListener('timeupdate',function(){
+        if(v._si<v._stops.length && v.currentTime>=v._stops[v._si]){
+          try{ v.pause(); }catch(e){}
+          c.innerHTML='<span>'+(labels[v._si]||'Continue')+'</span>'+ARROW;
+          w.setAttribute('data-held','');
+        }
+      });
+    }
+  });
+  function play(v){
+    var w=v.parentNode;
+    w.removeAttribute('data-done'); w.removeAttribute('data-held');
+    v._si=0;
+    try{ v.currentTime=0; var p=v.play(); if(p&&p.catch) p.catch(function(){}); }catch(e){}
+  }
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach(function(s,k){
+      if(k===i) s.setAttribute('data-on',''); else s.removeAttribute('data-on');
+      s.querySelectorAll('video').forEach(function(v){
+        if(k===i){ if(calm) v.parentNode.setAttribute('data-done',''); else play(v); }
+        else { try{ v.pause(); }catch(e){} }
+      });
+    });
+    count.textContent=String(i+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+    prog.style.width=((i+1)/slides.length*100)+'%';
+    slides[i].querySelectorAll('[data-n]').forEach(function(el){
+      el.textContent=String(i+1).padStart(2,'0'); });
+  }
+  document.getElementById('next').addEventListener('click',function(){ show(i+1); });
+  document.getElementById('prev').addEventListener('click',function(){ show(i-1); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key==='PageDown'||e.key===' '){ show(i+1); e.preventDefault(); }
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){ show(i-1); e.preventDefault(); }
+    if(e.key==='Home') show(0);
+    if(e.key==='End') show(slides.length-1);
+  });
+  show(0);
+})();
+</script>
+</body>
+</html>
